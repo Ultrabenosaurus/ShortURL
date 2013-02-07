@@ -9,7 +9,7 @@ if(isset($_GET['key']) && !empty($_GET['key'])){
 		if(preg_match('/http[s]*:\/\//', $link) < 1){
 			$link = 'http://'.$link;
 		}
-		$this->add_hit($key);
+		$l->add_hit($key);
 		header("Location: ".$link);
 	} else {
 		header("Location: ./");
