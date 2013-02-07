@@ -1,3 +1,11 @@
+<?php
+
+include 'url.class.php';
+$l = new URL($_SERVER['HTTP_HOST']);
+
+$urls = $l->get_user_urls();
+
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,6 +26,15 @@
 	}
 	#link{
 		margin: 10px;
+	}
+	#urls .key, #urls .url, #urls .count, #urls .last_accessed{
+		display: inline-block;
+	}
+	#urls div{
+		width: 39%;
+	}
+	#urls .key, #urls .count{
+		width: 10%;
 	}
 	.light-rounded {
 		border-radius: 3px;
@@ -68,6 +85,19 @@
 				<input type='button' name='submit' id='submit' value='Shorten' class='modern' />
 			</form>
 			<div id='link'></div>
+			<?php
+			if($urls){
+				echo "<div id='urls'>";
+				echo "<h3>Your Links</h3>";
+				foreach ($urls as $key => $value) {
+					echo "<div id='$key' class='key'><a href='".$l->add_url($l->get_url($key))."'>".$key."</a></div>\n";
+					echo "<div id='".$value['url']."' class='url'><a href='".$value['url']."'>".$value['url']."</a></div>\n";
+					echo "<div id='".$value['count']."' class='count'>".$value['count']."</div>\n";
+					echo "<div id='".$value['last_accessed']."' class='last_accessed'>".$value['last_accessed']."</div>\n";
+				}
+				echo "</div>";
+			}
+			?>
 		</div>
 	</body>
 	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>

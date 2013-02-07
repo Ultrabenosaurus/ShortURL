@@ -43,10 +43,58 @@ class URL {
 		$query->bind_result($url);
 		if($query->fetch() === true){
 			$query->free_result();
-			$this->add_hit($key);
 			return $url;
 		}
 		return false;
+	}
+
+	public function add_hit($key){
+		$query = $this->mysqli->prepare("SELECT `count` FROM `hits` WHERE `key` = ?");
+		$query->bind_param('s', $key);
+		$query->execute();
+		$query->store_result();
+		$query->bind_result($count);
+		if($query->fetch() === true){
+			$query->free_result();
+			$update = $this->mysqli->prepare("UPDATE `hits` SET `count` = `count`+1 WHERE `key` = ?");
+			$update->bind_param('s', $key);
+			$res = $update->execute();
+		} else {
+			$temp = 1;
+			$insert = $this->mysqli->prepare("INSERT INTO `hits` (`key`, `count`) VALUES (?, ?)");
+			$insert->bind_param('si', $key, $temp);
+			$res = $insert->execute();
+		}
+		return $res;
+	}
+
+	public function get_user_urls(){
+		$urls = array();
+		$url_query = $this->mysqli->prepare("SELECT `url`, `key` FROM `urls` WHERE `ip` = ?");
+		$url_query->bind_param('s', $this->user_ip);
+		$url_query->execute();
+		$url_query->store_result();
+		$url_query->bind_result($url, $key);
+		while ($url_query->fetch() === true) {
+			if(preg_match('/http[s]*:\/\//', $url) < 1){
+				$url = "http://".$url;
+			}
+			$urls[$key] = array('url'=>$url);
+		}
+		$url_query->free_result();
+		foreach ($urls as $key => $value) {
+			$hit_query = $this->mysqli->prepare("SELECT `count`, `time` FROM `hits` WHERE `key` = ?");
+			$hit_query->bind_param('s', $key);
+			$hit_query->execute();
+			$hit_query->store_result();
+			$hit_query->bind_result($count, $time);
+			if($hit_query->fetch() === true){
+				$urls[$key]['count'] = $count;
+				$urls[$key]['last_accessed'] = $time;
+			}
+			$hit_query->free_result();
+		}
+		return (!empty($urls)) ? $urls : false;
 	}
 
 	private function create_tables(){
@@ -86,26 +134,6 @@ class URL {
 
 	private function get_domain(){
 		return $this->domain;
-	}
-
-	private function add_hit($key){
-		$query = $this->mysqli->prepare("SELECT `count` FROM `hits` WHERE `key` = ?");
-		$query->bind_param('s', $key);
-		$query->execute();
-		$query->store_result();
-		$query->bind_result($count);
-		if($query->fetch() === true){
-			$query->free_result();
-			$update = $this->mysqli->prepare("UPDATE `hits` SET `count` = `count`+1 WHERE `key` = ?");
-			$update->bind_param('s', $key);
-			$res = $update->execute();
-		} else {
-			$temp = 1;
-			$insert = $this->mysqli->prepare("INSERT INTO `hits` (`key`, `count`) VALUES (?, ?)");
-			$insert->bind_param('si', $key, $temp);
-			$res = $insert->execute();
-		}
-		return $res;
 	}
 
 	private function url_key(){
