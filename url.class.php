@@ -91,6 +91,9 @@ class URL {
 			if($hit_query->fetch() === true){
 				$urls[$key]['count'] = $count;
 				$urls[$key]['last_accessed'] = $time;
+			} else {
+				$urls[$key]['count'] = 0;
+				$urls[$key]['last_accessed'] = 'never';
 			}
 			$hit_query->free_result();
 		}

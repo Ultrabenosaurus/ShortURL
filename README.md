@@ -14,7 +14,7 @@ Edit the database connection details in `url.class.php` to the appropriate value
 
 **Advanced**
 
-Edit the database connection details in `url.class.php` to the appropriate values for your database and upload it to your server. Create your own script to handle incoming requests however you want using the two public methods `add_url()` and `get_url()`. Simple.
+Edit the database connection details in `url.class.php` to the appropriate values for your database and upload it to your server. Create your own script to handle incoming requests however you want using the four public methods `add_url($url)`, `get_url($key)`, `add_hit($key)` and `get_user_urls()`. Simple.
 
 **Example**
 
@@ -23,11 +23,12 @@ include 'url.class.php';
 $l = new URL($_SERVER['HTTP_HOST']);
 
 if(isset($_GET['key']) && !empty($_GET['key'])){
-  $link = $l->get_url($_GET['key']);
-  if($link){
+	$link = $l->get_url($_GET['key']);
+	if($link){
 		if(preg_match('/http[s]*:\/\//', $link) < 1){
 			$link = 'http://'.$link;
 		}
+		$l->add_hit($_GET['key']);
 		header("Location: ".$link);
 	} else {
 		header("Location: ./");
@@ -56,6 +57,18 @@ get_url($key)
 ```
 
 Ask the database for the full URL that matches the given key. If the key is found in the database, the corresponding URL is returned and a hit is registered for the key.
+
+```php
+add_hit($key)
+```
+
+Increase the value of the `count` column in the `hits` table for the given key.
+
+```php
+get_user_urls()
+```
+
+Queries the `urls` table by the user's IP to find all the links they have shortened. Returns an array with indexed by the key containing the full URL, hit count and last time the short URL was used. See `index.php` for an example of how to use this.
 
 ## License ##
 
