@@ -23,7 +23,7 @@ class URL {
 		$this->salt = null;
 	}
 
-	public function add_url($url){
+	public function get_key($url){
 		$exist = $this->check_url($url);
 		if($exist){
 			return $this->get_domain().$exist;

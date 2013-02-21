@@ -90,7 +90,7 @@ $urls = $l->get_user_urls();
 				echo "<div id='urls'>";
 				echo "<h3>Your Links</h3>";
 				foreach ($urls as $key => $value) {
-					echo "<div id='$key' class='key'><a href='".$l->add_url($l->get_url($key))."' target='_blank'>".$key."</a></div>\n";
+					echo "<div id='$key' class='key'><a href='".$l->get_key($l->get_url($key))."' target='_blank'>".$key."</a></div>\n";
 					echo "<div id='".$value['url']."' class='url'><a href='".$value['url']."' target='_blank'>".$value['url']."</a></div>\n";
 					echo "<div id='".$value['count']."' class='count'>".$value['count']."</div>\n";
 					echo "<div id='".$value['last_accessed']."' class='last_accessed'>".$value['last_accessed']."</div>\n";

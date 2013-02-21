@@ -14,7 +14,7 @@ Edit the database connection details in `url.class.php` to the appropriate value
 
 **Advanced**
 
-Edit the database connection details in `url.class.php` to the appropriate values for your database and upload it to your server. Create your own script to handle incoming requests however you want using the four public methods `add_url($url)`, `get_url($key)`, `add_hit($key)` and `get_user_urls()`. Simple.
+Edit the database connection details in `url.class.php` to the appropriate values for your database and upload it to your server. Create your own script to handle incoming requests however you want using the four public methods `get_key($url)`, `get_url($key)`, `add_hit($key)` and `get_user_urls()`. Simple.
 
 **Example**
 
@@ -35,7 +35,7 @@ if(isset($_GET['key']) && !empty($_GET['key'])){
 	}
 }
 if(isset($_GET['url']) && !empty($_GET['url'])){
-	$key = $l->add_url(urldecode($_GET['url']));
+	$key = $l->get_key(urldecode($_GET['url']));
 	if($key){
 		echo "<a href='".$key."'>".$key."</a>";
 	} else {
@@ -47,7 +47,7 @@ if(isset($_GET['url']) && !empty($_GET['url'])){
 ## API ##
 
 ```php
-add_url($url)
+get_key($url)
 ```
 
 Create a short URL for the given `$url`. Generates a key, stores the URL and key in the database if it isn't already there. Returns the generated/found key (appeneded to your domain, if given when instantiating the class).
@@ -56,7 +56,7 @@ Create a short URL for the given `$url`. Generates a key, stores the URL and key
 get_url($key)
 ```
 
-Ask the database for the full URL that matches the given key. If the key is found in the database, the corresponding URL is returned and a hit is registered for the key.
+Ask the database for the full URL that matches the given key. If the key is found in the database, the corresponding URL is returned.
 
 ```php
 add_hit($key)

@@ -16,7 +16,7 @@ if(isset($_GET['key']) && !empty($_GET['key'])){
 	}
 }
 if(isset($_GET['url']) && !empty($_GET['url'])){
-	$key = $l->add_url(urldecode($_GET['url']));
+	$key = $l->get_key(urldecode($_GET['url']));
 	if($key){
 		echo "<a href='".$key."'>".$key."</a>";
 	} else {
